@@ -30,10 +30,12 @@ module OpenapiRailsTypedParameters
   end
 
   refine ActionController::Base do
-    def typed_parameters
-      TypedParameters.new(
+    def typed_params
+      @typed_params ||= TypedParameters.new(
         request: Handler.validator.request(request)
       )
     end
+
+    def typed_params_for(action) = typed_params
   end
 end

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'a', type: :request do
+RSpec.describe 'users', type: :request do
   describe 'Query parameters' do
     context 'with valid query' do
       it 'returns response' do

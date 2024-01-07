@@ -88,7 +88,6 @@ class UsersController < ApplicationController
   using OpenapiRailsTypedParameters
 
   def index
-    typed_params = typed_parameters
     typed_params.validate!
     res = {
       role: typed_params.query_params.role # 'admin' or 'maintainer',
