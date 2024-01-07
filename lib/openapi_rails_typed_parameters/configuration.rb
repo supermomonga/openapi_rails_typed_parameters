@@ -11,7 +11,7 @@ module OpenapiRailsTypedParameters
 
   class << self
     def configuration
-      @@configuration ||= Configuration.new
+      @@configuration ||= Configuration.new # rubocop:disable Style/ClassVars
     end
 
     def configure

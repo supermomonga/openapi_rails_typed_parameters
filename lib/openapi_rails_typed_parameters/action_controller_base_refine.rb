@@ -15,15 +15,15 @@ module OpenapiRailsTypedParameters
       @request = request
     end
 
-    def path_params() = request.path_parameters&.with_indifferent_access
-    def query_params() = request.query_parameters&.with_indifferent_access
-    def valid?() = validate.nil?
+    def path_params = request.path_parameters&.with_indifferent_access
+    def query_params = request.query_parameters&.with_indifferent_access
+    def valid? = validate.nil?
 
     def to_h
       {
-        path_params: path_params,
-        query_params: query_params,
-        body: body,
+        path_params:,
+        query_params:,
+        body:,
         valid: valid?
       }.with_indifferent_access
     end
