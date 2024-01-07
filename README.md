@@ -4,6 +4,16 @@
 
 This gem internally uses the [`openapi_first`](https://github.com/ahx/openapi_first) gem.
 
+### Main Objectives
+
+- Eliminate the code for params validation and type conversion (which is always a boring and routine task)
+- Provide an RBS generator (so you don't have to memorize parameters)
+
+### Differences from the `openapi_first` gem
+
+- Offers more tightly coupled features to Rails
+- Assists in statically typed programming by providing an RBS generator
+
 ## :warning: This gem is under development.
 
 This gem is currently under development. It is not recommended for use in production applications. Backward compatibility is not guaranteed until version 1.0.0 is released.
