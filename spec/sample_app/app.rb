@@ -23,9 +23,9 @@ class UsersController < ApplicationController
   using OpenapiRailsTypedParameters
 
   def index
-    tp = typed_parameters
-    tp.validate!
-    render json: tp.to_h
+    typed_params = typed_params_for(:index)
+    typed_params.validate!
+    render json: typed_params.to_h
   rescue OpenapiFirst::RequestInvalidError => e
     render json: {
       message: e.message
