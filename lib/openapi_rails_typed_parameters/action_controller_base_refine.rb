@@ -36,6 +36,6 @@ module OpenapiRailsTypedParameters
       )
     end
 
-    def typed_params_for(action) = typed_params
+    def typed_params_for(_action) = typed_params
   end
 end
