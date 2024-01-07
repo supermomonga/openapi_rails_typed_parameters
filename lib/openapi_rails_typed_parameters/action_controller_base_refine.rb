@@ -5,32 +5,34 @@ require_relative 'handler'
 
 module OpenapiRailsTypedParameters
   class TypedParameters
-    attr_reader :path, :query, :body
+    attr_reader :request
 
-    def initialize(path: {}, query: {}, body: {})
-      @path = path
-      @query = query
-      @body = body
+    delegate :body, to: :request
+    delegate :validate, to: :request
+    delegate :validate!, to: :request
+
+    def initialize(request:)
+      @request = request
     end
+
+    def path_params() = request.path_parameters&.with_indifferent_access
+    def query_params() = request.query_parameters&.with_indifferent_access
+    def valid?() = validate.nil?
 
     def to_h
       {
-        path: path,
-        query: query,
-        body: body
-      }
+        path_params: path_params,
+        query_params: query_params,
+        body: body,
+        valid: valid?
+      }.with_indifferent_access
     end
   end
 
   refine ActionController::Base do
     def typed_parameters
-      copied_request = request.dup
-      validator = Handler.validator
-      validator.request_validate(copied_request)
       TypedParameters.new(
-        path: copied_request.env[OpenapiFirst::REQUEST],
-        query: copied_request.env[OpenapiFirst::REQUEST],
-        body: copied_request.env[OpenapiFirst::REQUEST]
+        request: Handler.validator.request(request)
       )
     end
   end

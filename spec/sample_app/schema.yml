@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Sample App
+servers:
+  - url: https://example.com/
+paths:
+  /users:
+    get:
+      parameters:
+        - name: role
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ admin, maintainer ]
+        - name: minimum
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: maximum
+          in: query
+          required: false
+          schema:
+            type: integer

@@ -3,6 +3,7 @@
 require 'action_controller/railtie'
 
 class SampleApp < Rails::Application
+  config.active_support.cache_format_version = 7.0
   config.logger = ActiveSupport::Logger.new($stdout)
   config.eager_load = true
   config.hosts << proc { true } if config.respond_to? :hosts
@@ -23,7 +24,14 @@ class UsersController < ApplicationController
 
   def index
     tp = typed_parameters
-    render json: tp
+    begin
+      tp.validate!
+      render json: tp.to_h
+    rescue OpenapiFirst::RequestInvalidError => e
+      render json: {
+        message: e.message
+      }, status: :bad_request
+    end
   end
 
   def show

@@ -5,9 +5,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in openapi_rails_typed_parameters.gemspec
 gemspec
 
-gem 'rake', '>= 13.0.0'
+gem 'rake'
 
 group :test do
+  gem 'debug'
   gem 'rspec'
   gem 'rspec-rails'
 end
