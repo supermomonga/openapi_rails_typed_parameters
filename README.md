@@ -95,7 +95,7 @@ class UsersController < ApplicationController
       minimum: typed_params.query_params.minimum # Integer value
       maximum: typed_params.query_params.maximum # Integer value
     }
-    render json: res.to_h
+    render json: res
   rescue OpenapiFirst::RequestInvalidError => e
     res = {
       # e.g.)
