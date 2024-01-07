@@ -15,7 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
-          - '3.0'
           - '3.1'
           - '3.2'
     steps:
@@ -35,7 +34,6 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
-          - '3.0'
           - '3.1'
           - '3.2'
     env:
