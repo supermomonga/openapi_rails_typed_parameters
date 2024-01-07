@@ -24,14 +24,12 @@ class UsersController < ApplicationController
 
   def index
     tp = typed_parameters
-    begin
-      tp.validate!
-      render json: tp.to_h
-    rescue OpenapiFirst::RequestInvalidError => e
-      render json: {
-        message: e.message
-      }, status: :bad_request
-    end
+    tp.validate!
+    render json: tp.to_h
+  rescue OpenapiFirst::RequestInvalidError => e
+    render json: {
+      message: e.message
+    }, status: :bad_request
   end
 
   def show
