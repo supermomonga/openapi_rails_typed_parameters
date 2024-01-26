@@ -44,4 +44,22 @@ RSpec.describe 'users', type: :request do
       end
     end
   end
+
+  describe 'Path parameters'do
+    context 'with valid query' do
+      it 'returns response' do
+        get '/users/123'
+        expected = {
+          path_params: {
+            id: 123
+          },
+          query_params: {},
+          body: nil,
+          valid: true
+        }
+        actual = JSON.parse(response.body, symbolize_names: true)
+        expect(actual).to eq expected
+      end
+    end
+  end
 end

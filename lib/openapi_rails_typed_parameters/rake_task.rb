@@ -17,29 +17,15 @@ module OpenapiRailsTypedParameters
 
       block&.call(self)
 
-      def_generate
+      define_generate_task
     end
 
-    def def_generate
+    def define_generate_task
       desc 'Generate RBS files for given OpenAPI schema'
       task("#{name}:generate": :environment) do
         require 'openapi_rails_typed_parameters'
-
-        Rails.application.eager_load!
-
-        config = OpenapiRailsTypedParameters.configuration
-        validator = OpenapiFirst.load(config.schema_path)
-        validator.operations.each do |operation|
-          path = Rails.application.routes.recognize_path(operation.path, method: operation.method)
-          controller_name = "#{path[:controller]}_controller".camelize
-          action_name = path[:action]
-          rbs = <<~RBS
-            class #{controller_name}
-              def self.typed_params_for: (:#{action_name}) -> nil
-            end
-          RBS
-          puts rbs
-        end
+        type_generator = OpenapiRailsTypedParameters::TypeGenerator.new
+        type_generator.generate_rbs(rbs_file_path: '')
       end
     end
   end

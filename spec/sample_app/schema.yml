@@ -24,3 +24,44 @@ paths:
           required: false
           schema:
             type: integer
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                - name: role
+                  required: true
+                  schema:
+                    type: string
+                    enum: [ admin, maintainer ]
+  /users/{user_id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+  /users/{user_id}/articles:
+    get:
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+  /users/{user_id}/articles/{article_id}:
+    get:
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer

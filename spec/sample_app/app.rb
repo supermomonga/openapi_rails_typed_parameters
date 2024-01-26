@@ -33,7 +33,13 @@ class UsersController < ApplicationController
   end
 
   def show
-    render json: {}
+    typed_params = typed_params_for(:show)
+    typed_params.validate!
+    render json: typed_params.to_h
+  rescue OpenapiFirst::RequestInvalidError => e
+    render json: {
+      message: e.message
+    }, status: :bad_request
   end
 
   def create
