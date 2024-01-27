@@ -45,7 +45,7 @@ RSpec.describe 'users', type: :request do
     end
   end
 
-  describe 'Path parameters'do
+  describe 'Path parameters' do
     context 'with valid query' do
       it 'returns response' do
         get '/users/123'

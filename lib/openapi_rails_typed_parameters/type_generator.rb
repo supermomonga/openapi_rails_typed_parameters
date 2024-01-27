@@ -1,12 +1,12 @@
+# frozen_string_literal: true
 
 module OpenapiRailsTypedParameters
   class TypeGenerator
-    def generate_rbs(rbs_file_path:)
-
+    def generate_rbs
       config = OpenapiRailsTypedParameters.configuration
       validator = OpenapiFirst.load(config.schema_path)
 
-      return <<~RBS
+      <<~RBS
         #{parameter_definitions(validator:)}
 
         #{controller_definitions(validator:)}
@@ -19,11 +19,11 @@ module OpenapiRailsTypedParameters
       # TODO: sequence number for duped name
       verb = operation.method
       path =
-        operation.
-        path.
-        scan(/[\w_]+/).
-        join('_')
-      return "#{verb}_#{path}_params"
+        operation
+        .path
+        .scan(/[\w_]+/)
+        .join('_')
+      "#{verb}_#{path}_params"
     end
 
     def parameter_definitions(validator:)
@@ -34,28 +34,28 @@ module OpenapiRailsTypedParameters
         type_name = operation_to_type_name(operation:)
 
         path_params_rbs =
-          operation.
-          query_parameters&.
-          parameters.
-          then { _1 || []}.
-          map { |param|
+          operation
+          .query_parameters
+          &.parameters
+          .then { _1 || [] }
+          .map do |param|
             type = param.schema['type']
             optional = param.required? ? '' : '?'
             "#{param.name}: #{type}#{optional}"
-          }.
-          join(",\n")
+          end
+          .join(",\n")
 
         query_params_rbs =
-          operation.
-          query_parameters&.
-          parameters.
-          then { _1 || []}.
-          map { |param|
+          operation
+          .query_parameters
+          &.parameters
+          .then { _1 || [] }
+          .map do |param|
             type = param.schema['type'].camelize
             optional = param.required? ? '' : '?'
             "#{param.name}: #{type}#{optional}"
-          }.
-          join(",\n")
+          end
+          .join(",\n")
 
         lines << <<~RBS
           type #{type_name} = {
@@ -72,7 +72,7 @@ module OpenapiRailsTypedParameters
         RBS
       end
 
-      return lines.join("\n")
+      lines.join("\n")
     end
 
     def controller_definitions(validator:)
@@ -84,9 +84,9 @@ module OpenapiRailsTypedParameters
       params_definitions = {}
       validator.operations.each do |operation|
         puts "Find: #{operation.method} #{operation.path}"
-        path = journy_routes.find { |route|
+        path = journy_routes.find do |route|
           route.path.match?(operation.path) && route.verb.downcase.to_sym == operation.method.to_sym
-        }
+        end
 
         # path not found
         next unless path
@@ -96,7 +96,6 @@ module OpenapiRailsTypedParameters
 
         params_definitions[controller_name] ||= {}
         params_definitions[controller_name][action_name] = operation
-
       end
 
       lines = []
@@ -104,15 +103,15 @@ module OpenapiRailsTypedParameters
         lines << "class #{controller_name}"
         action_definitions.each.with_index do |(action_name, operation), i|
           type_name = operation_to_type_name(operation:)
-          if i == 0
-            lines << "  def self.typed_params_for: (:#{action_name}) -> #{type_name}"
-          else
-            lines << "                           | (:#{action_name}) -> #{type_name}"
-          end
+          lines << if i.zero?
+                     "  def self.typed_params_for: (:#{action_name}) -> #{type_name}"
+                   else
+                     "                           | (:#{action_name}) -> #{type_name}"
+                   end
         end
-        lines << "end"
+        lines << 'end'
       end
-      return lines.join("\n")
+      lines.join("\n")
     end
   end
 end

@@ -7,7 +7,7 @@ RSpec.describe OpenapiRailsTypedParameters::TypeGenerator do
     context 'a' do
       it 'generates correct RBS file' do
         type_generator = OpenapiRailsTypedParameters::TypeGenerator.new
-        actual = type_generator.generate_rbs(rbs_file_path: '')
+        actual = type_generator.generate_rbs
         expected = <<~RBS
           class UsersController
             def self.typed_params_for: (:index) -> nil
