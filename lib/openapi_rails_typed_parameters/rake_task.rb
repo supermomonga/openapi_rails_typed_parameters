@@ -39,9 +39,7 @@ module OpenapiRailsTypedParameters
       end
     end
 
-    private
-
-    def parse_options(argv:)
+    private def parse_options(argv:)
       options = {}
 
       option_parser = OptionParser.new
