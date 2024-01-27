@@ -51,7 +51,7 @@ RSpec.describe 'users', type: :request do
         get '/users/123'
         expected = {
           path_params: {
-            id: 123
+            user_id: 123
           },
           query_params: {},
           body: nil,

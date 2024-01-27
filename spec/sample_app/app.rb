@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'action_controller/railtie'
+require_relative '../../lib/openapi_rails_typed_parameters'
 
 class SampleApp < Rails::Application
   config.active_support.cache_format_version = 7.0

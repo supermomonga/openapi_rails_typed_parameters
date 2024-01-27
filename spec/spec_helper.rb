@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'openapi_rails_typed_parameters'
-require 'sample_app/app'
 require 'rspec/rails'
+require 'sample_app/app'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
