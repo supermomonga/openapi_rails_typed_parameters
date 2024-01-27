@@ -73,7 +73,7 @@ module OpenapiRailsTypedParameters
       end
 
       # return 'type hoge = {hi: Integer}'
-      rbs = format(definitions.join("\n"))
+      rbs = format(definitions.join)
       return rbs
     end
 
@@ -117,7 +117,8 @@ module OpenapiRailsTypedParameters
           end
           lines << 'end'
         end
-      return format(lines.join("\n"))
+      rbs = format(lines.join("\n"))
+      return rbs
     end
 
     def format(rbs)
@@ -125,7 +126,11 @@ module OpenapiRailsTypedParameters
       stream = StringIO.new
       writer = RBS::Writer.new(out: stream)
       writer.write(signature[1] + signature[2])
-      formatted = stream.string
+      formatted =
+        stream
+        .string
+        # remove multiple newlines
+        .gsub(/\n{2,}/, "\n")
       stream.close
       return formatted
     end
