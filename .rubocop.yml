@@ -39,3 +39,7 @@ Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
   SafeAutoCorrect: true
+
+Style/RequireOrder:
+  Enabled: true
+  SafeAutoCorrect: true

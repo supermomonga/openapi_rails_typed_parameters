@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require 'optparse'
+require 'rails'
 require 'rake'
 require 'rake/tasklib'
-require 'rails'
 
 module OpenapiRailsTypedParameters
   class RakeTask < Rake::TaskLib
