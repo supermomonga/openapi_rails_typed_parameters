@@ -1,33 +1,38 @@
 # frozen_string_literal: true
 
+require 'rbs'
+
 module OpenapiRailsTypedParameters
   class TypeGenerator
-    def generate_rbs
-      config = OpenapiRailsTypedParameters.configuration
-      validator = OpenapiFirst.load(config.schema_path)
+    private attr_accessor :config
+    private attr_accessor :validator
 
-      <<~RBS
-        #{parameter_definitions(validator:)}
-
-        #{controller_definitions(validator:)}
-      RBS
+    def initialize
+      @config = OpenapiRailsTypedParameters.configuration
+      @validator = OpenapiFirst.load(@config.schema_path)
     end
 
-    private
+    def generate_rbs
+      rbs = <<~RBS
+        #{generate_parameter_definitions}
+        #{generate_controller_definitions}
+      RBS
+      return format(rbs)
+    end
 
     def operation_to_type_name(operation:)
-      # TODO: sequence number for duped name
+      # TODO: Use same naming as Rails path helper
       verb = operation.method
       path =
         operation
         .path
         .scan(/[\w_]+/)
         .join('_')
-      "#{verb}_#{path}_params"
+      return "#{verb}_#{path}"
     end
 
-    def parameter_definitions(validator:)
-      lines = []
+    def generate_parameter_definitions
+      definitions = []
 
       operations = validator.operations
       operations.each do |operation|
@@ -35,11 +40,11 @@ module OpenapiRailsTypedParameters
 
         path_params_rbs =
           operation
-          .query_parameters
+          .path_parameters
           &.parameters
           .then { _1 || [] }
           .map do |param|
-            type = param.schema['type']
+            type = param.schema['type'].camelize
             optional = param.required? ? '' : '?'
             "#{param.name}: #{type}#{optional}"
           end
@@ -57,25 +62,22 @@ module OpenapiRailsTypedParameters
           end
           .join(",\n")
 
-        lines << <<~RBS
+        definitions << <<~RBS
           type #{type_name} = {
-            path_params: {
-              #{path_params_rbs}
-            },
-            query_params: {
-              #{query_params_rbs}
-            },
-            body: {
-            },
+            path_params: { #{path_params_rbs} },
+            query_params: { #{query_params_rbs} },
+            body: __todo__,
             valid: bool
           }
         RBS
       end
 
-      lines.join("\n")
+      # return 'type hoge = {hi: Integer}'
+      rbs = format(definitions.join("\n"))
+      return rbs
     end
 
-    def controller_definitions(validator:)
+    def generate_controller_definitions
       Rails.application.eager_load!
       route_inspector = ActionDispatch::Routing::RoutesInspector.new(Rails.application.routes.routes)
       journy_routes = route_inspector.instance_variable_get(:@routes)
@@ -99,19 +101,33 @@ module OpenapiRailsTypedParameters
       end
 
       lines = []
-      params_definitions.map do |controller_name, action_definitions|
-        lines << "class #{controller_name}"
-        action_definitions.each.with_index do |(action_name, operation), i|
-          type_name = operation_to_type_name(operation:)
-          lines << if i.zero?
-                     "  def self.typed_params_for: (:#{action_name}) -> #{type_name}"
-                   else
-                     "                           | (:#{action_name}) -> #{type_name}"
-                   end
+      params_definitions
+        .sort_by { |controller_name, _| controller_name }
+        .map do |controller_name, action_definitions|
+          lines << "class #{controller_name}"
+          action_definitions
+            .sort_by { |action_name, _| action_name }
+            .each.with_index do |(action_name, operation), i|
+            type_name = operation_to_type_name(operation:)
+            lines << if i.zero?
+                       "  def self.typed_params_for: (:#{action_name}) -> #{type_name}"
+                     else
+                       "                           | (:#{action_name}) -> #{type_name}"
+                     end
+          end
+          lines << 'end'
         end
-        lines << 'end'
-      end
-      lines.join("\n")
+      return format(lines.join("\n"))
+    end
+
+    def format(rbs)
+      signature = RBS::Parser.parse_signature(rbs)
+      stream = StringIO.new
+      writer = RBS::Writer.new(out: stream)
+      writer.write(signature[1] + signature[2])
+      formatted = stream.string
+      stream.close
+      return formatted
     end
   end
 end
