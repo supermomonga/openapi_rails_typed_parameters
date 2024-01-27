@@ -43,3 +43,10 @@ Style/FrozenStringLiteralComment:
 Style/RequireOrder:
   Enabled: true
   SafeAutoCorrect: true
+
+Style/AccessModifierDeclarations:
+  Enabled: true
+  EnforcedStyle: inline
+
+Style/RedundantReturn:
+  Enabled: false
