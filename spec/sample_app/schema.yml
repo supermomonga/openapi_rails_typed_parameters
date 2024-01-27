@@ -39,7 +39,7 @@ paths:
   /users/{user_id}:
     get:
       parameters:
-        - name: id
+        - name: user_id
           in: path
           required: true
           schema:
