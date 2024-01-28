@@ -1,0 +1,5 @@
+class OpenapiRailsTypedParameters::Configuration
+  @schema_path: String
+  attr_accessor schema_path: String
+  private def initialize: () -> void
+end

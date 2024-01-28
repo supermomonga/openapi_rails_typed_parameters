@@ -1,0 +1,10 @@
+class OpenapiRailsTypedParameters::RakeTask < ::Rake::TaskLib
+  @name: String
+  @sig_root_dir: String
+  attr_accessor name: String
+  attr_writer sig_root_dir: String
+
+  def initialize: (?name: Symbol) ?{ () -> untyped } -> void
+  def define_generate_task: () -> void
+  private def parse_options: (argv: Array[String]) -> { force: bool }
+end

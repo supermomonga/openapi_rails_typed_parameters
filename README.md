@@ -36,7 +36,61 @@ Add `openapi_rails_typed_parameters` to your Gemfile.
 gem 'openapi_rails_typed_parameters'
 ```
 
+Then, install rake task by generator.
+
+```sh
+bin/rails g openapi_rails_typed_parameters:install
+```
+
 ## Usage
+
+Run `openapi_rails_typed_parameters:generate` rake task.
+
+```sh
+bin/rails openapi_rails_typed_parameters:generate
+```
+
+If you update your OpenAPI definition, then generate again with `--force` option. It overwrites RBSs.
+
+```sh
+bin/rails openapi_rails_typed_parameters:generate --force
+```
+
+## Usage
+
+Add `using OpenapiRailsTypedParameters` to your controller class. You can access statically typed parameters via `typed_params` method.
+
+```rb
+class UsersController < ApplicationController
+  using OpenapiRailsTypedParameters
+
+  def index
+    # BEFORE: Default Rails code.
+    params.permit(:role)
+    role_string = params[:role]
+    role =
+      if role_string.present?
+        if ['admin', 'maintainer', 'member'].include?(role_string)
+          role_string.to_sym
+        else
+          raise 'Unknown `role` passed. available values are: [admin, maintainer, member].'
+        end
+      else
+        :member # fallback to default
+      end
+
+    # AFTER: Typed parameters way.
+    # role is validated, and it's type coerced.
+    role = typed_params.query_params.role # :admin, :maintainer or :member
+
+    @users = User.where(role:)
+    render :index
+  end
+end
+
+```
+
+## RBS generation, static typing
 
 Please add an initializer to your Rails application and specify the path to the OpenAPI schema file.
 
@@ -50,7 +104,29 @@ OpenapiRailsTypedParameters.configure do |config|
 end
 ```
 
-Then, add `using OpenapiRailsTypedParameters` to your controller class. You can access statically typed parameters via `typed_parameters` method.
+If you want to customize generator behavior, edit `lib/tasks/openapi_rails_typed_parameters.rake`.
+
+Then, you can use statically typed parameters. Please use `typed_params_for(:action_name)` instead of `typed_params`.
+
+Enjoy statically typed params with your favorite LSP server.
+
+```rb
+class UsersController < ApplicationController
+  using OpenapiRailsTypedParameters
+
+  def index
+    # BEFORE: RBS not injected.
+    _ = typed_params
+
+    # AFTER: RBS injected.
+    _ = typed_params_for(:index)
+
+    role = typed_params_for(:index).query_params.role
+    @users = User.where(role:)
+    render :index
+  end
+end
+```
 
 ## Example
 
@@ -70,7 +146,8 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ admin, maintainer ]
+            enum: [ admin, maintainer, member ]
+            default: member
         - name: minimum
           in: query
           required: false

@@ -1,0 +1,6 @@
+class OpenapiRailsTypedParameters::Handler
+  attr_accessor self.configuration: OpenapiRailsTypedParameters::Configuration
+  attr_accessor self.validator: untyped
+  def self.build_validator: () -> __todo__
+  def self.build_validator_if_needed: () -> __todo__
+end

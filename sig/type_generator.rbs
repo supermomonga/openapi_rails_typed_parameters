@@ -1,0 +1,12 @@
+class OpenapiRailsTypedParameters::TypeGenerator
+  @config: OpenapiRailsTypedParameters::Configuration
+  @validator: __todo__
+  private attr_accessor config: OpenapiRailsTypedParameters::Configuration
+  private attr_accessor validator: __todo__
+  private def initialize: () -> void
+  def generate_rbs: () -> String
+  def operation_to_type_name: (operation: __todo__) -> String
+  def generate_parameter_definitions: () -> String
+  def generate_controller_definitions: () -> String
+  def format: (String rbs) -> String
+end

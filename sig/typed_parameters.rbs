@@ -1,0 +1,17 @@
+
+
+class OpenapiRailsTypedParameters::TypedParameters
+  type parameter_value = String | Integer | Symbol | bool
+  type parameters = Hash[Symbol, parameter_value?]
+
+  @request: __todo__
+  attr_reader request: __todo__
+  private def initialize: (request: __todo__) -> void
+  def path_params: () -> parameters
+  def query_params: () -> parameters
+  def valid?: () -> bool
+  def to_h: () -> { path_params: parameters, query_params: parameters, body: String?, valid: bool }
+  def validate!: () -> void
+  def body: () -> String
+  def validate: () -> __todo__
+end
