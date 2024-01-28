@@ -17,3 +17,7 @@ group :lint do
   gem 'rubocop'
   gem 'steep'
 end
+
+group :rbs do
+  gem 'orthoses'
+end
